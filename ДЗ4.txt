@@ -1,0 +1,13 @@
+Ссылкa на загруженные прочтения из NCBI SRA: https://www.ncbi.nlm.nih.gov/sra/SRX27150590[accn]
+Результат команды samtools flagstat: Процент картированных ридов: 0.01%
+Инструкцию по развертыванию и установке фреймворка:
+Загрузите Miniconda:
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+После завершения установки активируйте Conda:
+source ~/miniconda3/bin/activate
+После установки Conda выполните команду для установки Snakemake:
+conda install -c conda-forge -c bioconda snakemake
+Описание способа визуализации:
+Для визуализации был использован встроенный в Snakemake генератор DAG, который отображает зависимость правил друг от друга.
+Graphviz был использован для преобразования графа в изображение.
+На выходе получен граф с четкими связями между этапами выполнения пайплайна.

@@ -1,3 +1,55 @@
-rule hello:
-    output: "hello.txt"
-    shell: "echo Hello, World! > {output}"
+SAMPLES = ["sample1", "sample2"] 
+
+rule all:
+    input:
+        expand("results/flagstat/{sample}_flagstat.txt", sample=SAMPLES)
+
+rule fastqc:
+    input:
+        "data/{sample}.fastq"
+    output:
+        "results/fastqc/{sample}_fastqc.html", "results/fastqc/{sample}_fastqc.zip"
+    shell:
+        "fastqc {input} -o results/fastqc/"
+
+rule index_reference:
+    input:
+        "data/reference.fna"
+    output:
+        "data/reference.fna.bwt"
+    shell:
+        "bwa index {input}"
+
+rule map_reads:
+    input:
+        ref="data/reference.fna",
+        reads="data/{sample}.fastq"
+    output:
+        "results/{sample}.sam"
+    shell:
+        "bwa mem {input.ref} {input.reads} > {output}"
+
+rule sam_to_bam:
+    input:
+        "results/{sample}.sam"
+    output:
+        "results/{sample}.bam"
+    shell:
+        "samtools view -bS {input} > {output}"
+
+rule sort_bam:
+    input:
+        "results/{sample}.bam"
+    output:
+        "results/{sample}_sorted.bam"
+    shell:
+        "samtools sort {input} -o {output}"
+
+rule flagstat:
+    input:
+        "results/{sample}_sorted.bam"
+    output:
+        "results/flagstat/{sample}_flagstat.txt"
+    shell:
+        "samtools flagstat {input} > {output}"
+
